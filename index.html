@@ -115,6 +115,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
+            cursor: pointer;
         }
 
         .logo img {
@@ -581,7 +582,7 @@
     </div>
 
     <div class="header">
-        <div class="logo">
+        <div class="logo" onclick="backToHome()">
             <span>QUIZZLER</span>
         </div>
     </div>
@@ -645,7 +646,7 @@
                 <div class="question-number" id="questionNumber">Question 1 of 40</div>
                 <div class="question-text" id="questionText"></div>
                 
-                <div class="scale-container">
+                <div class="scale-container" id="spiritualScaleContainer">
                     <div class="scale-option" onclick="selectAnswer(0)">
                         <div class="number">0</div>
                         <div class="label">Never</div>
@@ -701,7 +702,10 @@
 
                 <div class="bible-quote" id="bibleQuote"></div>
 
-                <button class="btn btn-primary" onclick="restartQuiz()" style="margin-top: 30px;">Take Quiz Again</button>
+                <div style="margin-top: 30px; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                    <button class="btn btn-primary" onclick="restartQuiz()">Take Quiz Again</button>
+                    <button class="btn btn-secondary" onclick="backToHome()">← Back to Home</button>
+                </div>
             </div>
         </div>
     </div>
@@ -1280,8 +1284,10 @@
             const questionText = document.getElementById('questionText');
             const questionNumber = document.getElementById('questionNumber');
             const progressBar = document.getElementById('progressBar');
+            const spiritualScaleContainer = document.getElementById('spiritualScaleContainer');
             
             if (currentQuizType === 'history') {
+                spiritualScaleContainer.style.display = 'none';
                 const currentQ = currentQuestions[currentQuestionIndex];
                 questionText.innerHTML = `
                     <div style="margin-bottom: 20px;">${currentQ.q}</div>
@@ -1294,6 +1300,7 @@
                     </div>
                 `;
             } else {
+                spiritualScaleContainer.style.display = 'flex';
                 questionText.textContent = currentQuestions[currentQuestionIndex];
             }
             
