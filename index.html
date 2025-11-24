@@ -621,21 +621,11 @@
                         <div class="question-count">100 Questions</div>
                         <div class="description">Comprehensive assessment for those seeking profound spiritual insights</div>
                     </div>
-                </div>
-
-                <div class="quiz-hub">
-                    <h2>🎯 More Quizzes Coming Soon</h2>
-                    <div class="quiz-grid">
-                        <div class="quiz-card">
-                            <div class="quiz-card-image">
-                                <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=600&h=400&fit=crop" alt="Bible Knowledge Quiz">
-                            </div>
-                            <div class="quiz-card-content">
-                                <h3>📖 Bible Knowledge Master</h3>
-                                <p>Test your knowledge of Scripture, biblical characters, and stories from both Old and New Testaments.</p>
-                                <span class="quiz-status status-coming-soon">Coming Soon</span>
-                            </div>
-                        </div>
+                </div>                    <div class="quiz-hub">
+                    <h2>🎯 More Quizzes</h2>
+                    <div class="quiz-grid" id="quizGrid">
+                        <!-- Quiz cards will be dynamically generated here -->
+                    </div>
 
                         <div class="quiz-card">
                             <div class="quiz-card-image">
@@ -774,6 +764,82 @@
     </div>
 
     <script>
+        // ============================================
+        // UPCOMING QUIZZES CONFIGURATION
+        // ============================================
+        // To add a new quiz card to the homepage:
+        // 1. Add an object to this array with all required properties
+        // 2. Set status to 'available' when quiz is ready, 'coming-soon' otherwise
+        // 3. Set quizId to match the quiz type (used for routing)
+        // ============================================
+        
+        const upcomingQuizzes = [
+            {
+                id: 'bible-knowledge',
+                icon: '📖',
+                title: 'Bible Knowledge Master',
+                description: 'Test your knowledge of Scripture, biblical characters, and stories from both Old and New Testaments.',
+                image: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=600&h=400&fit=crop',
+                status: 'coming-soon',
+                quizId: null
+            },
+            {
+                id: 'spiritual-gifts',
+                icon: '🎁',
+                title: 'Discover Your Spiritual Gifts',
+                description: 'Identify your unique spiritual gifts and learn how God has equipped you to serve His kingdom.',
+                image: 'https://images.unsplash.com/photo-1513151233558-d860c5398176?w=600&h=400&fit=crop',
+                status: 'coming-soon',
+                quizId: null
+            },
+            {
+                id: 'prayer-life',
+                icon: '🙏',
+                title: 'Prayer Life Assessment',
+                description: 'Evaluate the depth and consistency of your prayer life and receive guidance for growth.',
+                image: 'https://images.unsplash.com/photo-1473116763249-2faaef81ccda?w=600&h=400&fit=crop',
+                status: 'coming-soon',
+                quizId: null
+            },
+            {
+                id: 'fruit-of-spirit',
+                icon: '🍎',
+                title: 'Fruit of the Spirit Check',
+                description: 'Discover which fruits of the Spirit are evident in your life and areas for development.',
+                image: 'https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=600&h=400&fit=crop',
+                status: 'coming-soon',
+                quizId: null
+            },
+            {
+                id: 'christian-history',
+                icon: '⛪',
+                title: 'Christian History Trivia',
+                description: 'Journey through church history, reformers, and significant events that shaped Christianity.',
+                image: 'https://images.unsplash.com/photo-1544027993-37dbfe43562a?w=600&h=400&fit=crop',
+                status: 'available',
+                quizId: 'history'
+            },
+            {
+                id: 'worship-style',
+                icon: '🎵',
+                title: 'Your Worship Style',
+                description: 'Explore how you naturally connect with God in worship and praise.',
+                image: 'https://images.unsplash.com/photo-1501139083538-0139583c060f?w=600&h=400&fit=crop',
+                status: 'coming-soon',
+                quizId: null
+            }
+        ];
+
+        // ============================================
+        // QUIZ DATA STRUCTURE
+        // ============================================
+        // Each quiz has its own questions array organized by difficulty
+        // To add a new quiz: 
+        // 1. Add quiz metadata to upcomingQuizzes array
+        // 2. Create questions object here with easy/medium/hard arrays
+        // 3. Create custom evaluation logic in getResultData function
+        // ============================================
+
         const questions = {
             easy: [
                 "I dedicate time each day to pray and communicate with God",
@@ -992,16 +1058,270 @@
             ]
         };
 
+        // Christian History Trivia Questions
+        const historyQuestions = {
+            // BETHLEHEM MODE - 30 Questions (Foundational Knowledge)
+            bethlehem: [
+                { q: "Who was the Roman emperor who blamed Christians for the fire in Rome in 64 AD?", a: ["Nero", "Constantine", "Diocletian", "Augustus"], correct: 0, category: "early-church" },
+                { q: "In what year did Constantine issue the Edict of Milan, legalizing Christianity?", a: ["313 AD", "325 AD", "405 AD", "476 AD"], correct: 0, category: "early-church" },
+                { q: "Which council in 325 AD affirmed that Jesus was fully divine and equal with the Father?", a: ["Council of Nicaea", "Council of Trent", "Council of Chalcedon", "Council of Constantinople"], correct: 0, category: "councils" },
+                { q: "Who completed the Latin Vulgate Bible in 405 AD?", a: ["Jerome", "Augustine", "Origen", "Athanasius"], correct: 0, category: "bible-translation" },
+                { q: "Which missionary went to Ireland in 432 AD after having been enslaved there?", a: ["St. Patrick", "St. Augustine", "St. Boniface", "St. Columba"], correct: 0, category: "missions" },
+                { q: "In what year did the Great Schism officially split the Eastern Orthodox and Roman Catholic churches?", a: ["1054", "1095", "1517", "1453"], correct: 0, category: "schisms" },
+                { q: "Who wrote 'Summa Theologica' completed in 1273?", a: ["Thomas Aquinas", "Augustine", "Anselm", "Boethius"], correct: 0, category: "theologians" },
+                { q: "In what year did Martin Luther nail his 95 Theses to the church door in Wittenberg?", a: ["1517", "1453", "1520", "1534"], correct: 0, category: "reformation" },
+                { q: "Which English king broke from the Roman Catholic Church to form the Church of England?", a: ["Henry VIII", "Edward VI", "James I", "Charles I"], correct: 0, category: "reformation" },
+                { q: "Who translated the Bible into English in the 1380s, before the Reformation?", a: ["John Wycliffe", "William Tyndale", "John Calvin", "Martin Luther"], correct: 0, category: "bible-translation" },
+                { q: "What was the name of the council that responded to the Protestant Reformation (1545-1563)?", a: ["Council of Trent", "Vatican Council I", "Council of Nicaea", "Council of Chalcedon"], correct: 0, category: "councils" },
+                { q: "Which reformer established a theocracy in Geneva, Switzerland?", a: ["John Calvin", "Ulrich Zwingli", "Martin Luther", "John Knox"], correct: 0, category: "reformation" },
+                { q: "Who is considered the first Christian hermit, retreating to the Egyptian desert around 270 AD?", a: ["Antony of Egypt", "Simeon Stylites", "Benedict of Nursia", "Francis of Assisi"], correct: 0, category: "monasticism" },
+                { q: "Which apostle wrote the Book of Revelation while exiled on the island of Patmos?", a: ["John", "Peter", "Paul", "James"], correct: 0, category: "early-church" },
+                { q: "Who was known as the 'Apostle to the Gentiles'?", a: ["Paul", "Peter", "Barnabas", "Philip"], correct: 0, category: "early-church" },
+                { q: "What event in 1095 was initiated by Pope Urban II to reclaim the Holy Land?", a: ["The First Crusade", "The Inquisition", "The Great Schism", "The Iconoclast Controversy"], correct: 0, category: "medieval" },
+                { q: "Who founded the Jesuit order in 1540?", a: ["Ignatius of Loyola", "Francis Xavier", "Thomas Aquinas", "Dominic de Guzmán"], correct: 0, category: "religious-orders" },
+                { q: "What was the Protestant movement called that emphasized personal conversion and holy living in the 1700s?", a: ["Pietism", "Puritanism", "Methodism", "Anabaptism"], correct: 0, category: "movements" },
+                { q: "Who were the two famous preachers of the Great Awakening in colonial America?", a: ["George Whitefield and Jonathan Edwards", "John Wesley and Charles Wesley", "Martin Luther and John Calvin", "William Tyndale and John Knox"], correct: 0, category: "revival" },
+                { q: "Which Roman emperor made Christianity the official religion of the Roman Empire?", a: ["Theodosius I", "Constantine", "Justinian", "Charlemagne"], correct: 0, category: "early-church" },
+                { q: "Who wrote 'The City of God' in response to the sack of Rome in 410 AD?", a: ["Augustine of Hippo", "Tertullian", "Origen", "Irenaeus"], correct: 0, category: "theologians" },
+                { q: "What heresy denied the full divinity of Christ and was condemned at Nicaea?", a: ["Arianism", "Nestorianism", "Gnosticism", "Pelagianism"], correct: 0, category: "heresies" },
+                { q: "Which medieval movement featured traveling preachers who took vows of poverty?", a: ["Franciscans", "Benedictines", "Cistercians", "Carthusians"], correct: 0, category: "religious-orders" },
+                { q: "Who was burned at the stake in 1415 for his reform ideas before the Protestant Reformation?", a: ["John Hus", "Jan Zizka", "Jerome of Prague", "Peter Waldo"], correct: 0, category: "pre-reformation" },
+                { q: "What major Christian empire fell to the Ottoman Turks in 1453?", a: ["Byzantine Empire", "Holy Roman Empire", "Frankish Kingdom", "Visigothic Kingdom"], correct: 0, category: "medieval" },
+                { q: "Who led the Oxford Movement in the 1800s emphasizing Catholic tradition in Anglicanism?", a: ["John Henry Newman", "Charles Spurgeon", "Dwight L. Moody", "William Booth"], correct: 0, category: "modern" },
+                { q: "Which movement began at Azusa Street in Los Angeles in 1906?", a: ["Pentecostalism", "Fundamentalism", "Neo-orthodoxy", "Social Gospel"], correct: 0, category: "modern" },
+                { q: "What council in 451 AD declared Christ had two distinct natures—divine and human?", a: ["Council of Chalcedon", "Council of Ephesus", "Council of Constantinople", "Council of Nicaea"], correct: 0, category: "councils" },
+                { q: "Who is known as the 'Father of Monasticism in the West'?", a: ["Benedict of Nursia", "Basil the Great", "Antony of Egypt", "Augustine of Hippo"], correct: 0, category: "monasticism" },
+                { q: "Which English preacher founded the Salvation Army in 1865?", a: ["William Booth", "Charles Spurgeon", "George Müller", "Hudson Taylor"], correct: 0, category: "modern" }
+            ],
+            // JERUSALEM MODE - 50 Questions (Intermediate Knowledge)
+            jerusalem: [
+                // All 30 Bethlehem questions plus 20 more
+                { q: "Who was the Roman emperor who blamed Christians for the fire in Rome in 64 AD?", a: ["Nero", "Constantine", "Diocletian", "Augustus"], correct: 0, category: "early-church" },
+                { q: "In what year did Constantine issue the Edict of Milan, legalizing Christianity?", a: ["313 AD", "325 AD", "405 AD", "476 AD"], correct: 0, category: "early-church" },
+                { q: "Which council in 325 AD affirmed that Jesus was fully divine and equal with the Father?", a: ["Council of Nicaea", "Council of Trent", "Council of Chalcedon", "Council of Constantinople"], correct: 0, category: "councils" },
+                { q: "Who completed the Latin Vulgate Bible in 405 AD?", a: ["Jerome", "Augustine", "Origen", "Athanasius"], correct: 0, category: "bible-translation" },
+                { q: "Which missionary went to Ireland in 432 AD after having been enslaved there?", a: ["St. Patrick", "St. Augustine", "St. Boniface", "St. Columba"], correct: 0, category: "missions" },
+                { q: "In what year did the Great Schism officially split the Eastern Orthodox and Roman Catholic churches?", a: ["1054", "1095", "1517", "1453"], correct: 0, category: "schisms" },
+                { q: "Who wrote 'Summa Theologica' completed in 1273?", a: ["Thomas Aquinas", "Augustine", "Anselm", "Boethius"], correct: 0, category: "theologians" },
+                { q: "In what year did Martin Luther nail his 95 Theses to the church door in Wittenberg?", a: ["1517", "1453", "1520", "1534"], correct: 0, category: "reformation" },
+                { q: "Which English king broke from the Roman Catholic Church to form the Church of England?", a: ["Henry VIII", "Edward VI", "James I", "Charles I"], correct: 0, category: "reformation" },
+                { q: "Who translated the Bible into English in the 1380s, before the Reformation?", a: ["John Wycliffe", "William Tyndale", "John Calvin", "Martin Luther"], correct: 0, category: "bible-translation" },
+                { q: "What was the name of the council that responded to the Protestant Reformation (1545-1563)?", a: ["Council of Trent", "Vatican Council I", "Council of Nicaea", "Council of Chalcedon"], correct: 0, category: "councils" },
+                { q: "Which reformer established a theocracy in Geneva, Switzerland?", a: ["John Calvin", "Ulrich Zwingli", "Martin Luther", "John Knox"], correct: 0, category: "reformation" },
+                { q: "Who is considered the first Christian hermit, retreating to the Egyptian desert around 270 AD?", a: ["Antony of Egypt", "Simeon Stylites", "Benedict of Nursia", "Francis of Assisi"], correct: 0, category: "monasticism" },
+                { q: "Which apostle wrote the Book of Revelation while exiled on the island of Patmos?", a: ["John", "Peter", "Paul", "James"], correct: 0, category: "early-church" },
+                { q: "Who was known as the 'Apostle to the Gentiles'?", a: ["Paul", "Peter", "Barnabas", "Philip"], correct: 0, category: "early-church" },
+                { q: "What event in 1095 was initiated by Pope Urban II to reclaim the Holy Land?", a: ["The First Crusade", "The Inquisition", "The Great Schism", "The Iconoclast Controversy"], correct: 0, category: "medieval" },
+                { q: "Who founded the Jesuit order in 1540?", a: ["Ignatius of Loyola", "Francis Xavier", "Thomas Aquinas", "Dominic de Guzmán"], correct: 0, category: "religious-orders" },
+                { q: "What was the Protestant movement called that emphasized personal conversion and holy living in the 1700s?", a: ["Pietism", "Puritanism", "Methodism", "Anabaptism"], correct: 0, category: "movements" },
+                { q: "Who were the two famous preachers of the Great Awakening in colonial America?", a: ["George Whitefield and Jonathan Edwards", "John Wesley and Charles Wesley", "Martin Luther and John Calvin", "William Tyndale and John Knox"], correct: 0, category: "revival" },
+                { q: "Which Roman emperor made Christianity the official religion of the Roman Empire?", a: ["Theodosius I", "Constantine", "Justinian", "Charlemagne"], correct: 0, category: "early-church" },
+                { q: "Who wrote 'The City of God' in response to the sack of Rome in 410 AD?", a: ["Augustine of Hippo", "Tertullian", "Origen", "Irenaeus"], correct: 0, category: "theologians" },
+                { q: "What heresy denied the full divinity of Christ and was condemned at Nicaea?", a: ["Arianism", "Nestorianism", "Gnosticism", "Pelagianism"], correct: 0, category: "heresies" },
+                { q: "Which medieval movement featured traveling preachers who took vows of poverty?", a: ["Franciscans", "Benedictines", "Cistercians", "Carthusians"], correct: 0, category: "religious-orders" },
+                { q: "Who was burned at the stake in 1415 for his reform ideas before the Protestant Reformation?", a: ["John Hus", "Jan Zizka", "Jerome of Prague", "Peter Waldo"], correct: 0, category: "pre-reformation" },
+                { q: "What major Christian empire fell to the Ottoman Turks in 1453?", a: ["Byzantine Empire", "Holy Roman Empire", "Frankish Kingdom", "Visigothic Kingdom"], correct: 0, category: "medieval" },
+                { q: "Who led the Oxford Movement in the 1800s emphasizing Catholic tradition in Anglicanism?", a: ["John Henry Newman", "Charles Spurgeon", "Dwight L. Moody", "William Booth"], correct: 0, category: "modern" },
+                { q: "Which movement began at Azusa Street in Los Angeles in 1906?", a: ["Pentecostalism", "Fundamentalism", "Neo-orthodoxy", "Social Gospel"], correct: 0, category: "modern" },
+                { q: "What council in 451 AD declared Christ had two distinct natures—divine and human?", a: ["Council of Chalcedon", "Council of Ephesus", "Council of Constantinople", "Council of Nicaea"], correct: 0, category: "councils" },
+                { q: "Who is known as the 'Father of Monasticism in the West'?", a: ["Benedict of Nursia", "Basil the Great", "Antony of Egypt", "Augustine of Hippo"], correct: 0, category: "monasticism" },
+                { q: "Which English preacher founded the Salvation Army in 1865?", a: ["William Booth", "Charles Spurgeon", "George Müller", "Hudson Taylor"], correct: 0, category: "modern" },
+                // 20 Additional Jerusalem questions
+                { q: "Who coined the term 'Trinity' and later joined the Montanist movement?", a: ["Tertullian", "Athanasius", "Origen", "Cyprian"], correct: 0, category: "theologians" },
+                { q: "What was the 'Babylonian Captivity of the Papacy' (1309-1377)?", a: ["When popes resided in Avignon, France", "When Rome was sacked", "When Constantinople fell", "When Protestants separated"], correct: 0, category: "medieval" },
+                { q: "Who led the Methodist movement in 18th century England?", a: ["John Wesley", "George Whitefield", "Jonathan Edwards", "Charles Finney"], correct: 0, category: "revival" },
+                { q: "What document did Luther present at the Diet of Worms in 1521?", a: ["His defense of his teachings", "The 95 Theses", "The Augsburg Confession", "The Heidelberg Catechism"], correct: 0, category: "reformation" },
+                { q: "Which early church father wrote 'Against Heresies' combating Gnosticism?", a: ["Irenaeus", "Justin Martyr", "Clement of Alexandria", "Polycarp"], correct: 0, category: "early-church" },
+                { q: "What was the Peace of Westphalia (1648)?", a: ["Treaty ending religious wars in Europe", "Council defining doctrine", "Agreement on Bible translation", "Concordat with Rome"], correct: 0, category: "reformation" },
+                { q: "Who established the first Protestant missionary society in 1792?", a: ["William Carey", "Hudson Taylor", "David Livingstone", "Adoniram Judson"], correct: 0, category: "missions" },
+                { q: "What theological movement did Karl Barth lead in the 20th century?", a: ["Neo-orthodoxy", "Liberalism", "Fundamentalism", "Liberation Theology"], correct: 0, category: "modern" },
+                { q: "Which pope called the Second Vatican Council (1962-1965)?", a: ["John XXIII", "Paul VI", "Pius XII", "John Paul II"], correct: 0, category: "modern" },
+                { q: "Who wrote 'The Pilgrim's Progress' while imprisoned?", a: ["John Bunyan", "John Milton", "John Donne", "George Herbert"], correct: 0, category: "literature" },
+                { q: "What movement sought to apply Christianity to social problems in the late 1800s?", a: ["Social Gospel", "Liberation Theology", "Fundamentalism", "Dispensationalism"], correct: 0, category: "modern" },
+                { q: "Who translated the New Testament into German before Luther?", a: ["No one—Luther was first", "Erasmus", "John Wycliffe", "William Tyndale"], correct: 0, category: "bible-translation" },
+                { q: "What was the Westminster Assembly (1643-1653)?", a: ["Gathering that produced Reformed confessions", "Trial of Charles I", "Coronation ceremony", "Bible translation committee"], correct: 0, category: "reformation" },
+                { q: "Which missionary was martyred in Ecuador in 1956?", a: ["Jim Elliot", "William Carey", "Hudson Taylor", "C.T. Studd"], correct: 0, category: "missions" },
+                { q: "What doctrine did Pelagius teach that Augustine opposed?", a: ["Humans can achieve salvation without grace", "Christ wasn't fully divine", "The Trinity is false", "Baptism is unnecessary"], correct: 0, category: "heresies" },
+                { q: "Who founded the Moravian Church known for missionary zeal?", a: ["Count Zinzendorf", "John Hus", "Jan Amos Comenius", "Philip Spener"], correct: 0, category: "movements" },
+                { q: "What was the 'Iconoclast Controversy' (726-843)?", a: ["Debate over religious images in worship", "Dispute about Bible translation", "Conflict over papal authority", "Arguments about predestination"], correct: 0, category: "medieval" },
+                { q: "Which theologian wrote 'Institutes of the Christian Religion'?", a: ["John Calvin", "Martin Luther", "Ulrich Zwingli", "Philip Melanchthon"], correct: 0, category: "reformation" },
+                { q: "What biblical discovery was made at Qumran in 1947?", a: ["Dead Sea Scrolls", "Nag Hammadi Library", "Codex Sinaiticus", "Rosetta Stone"], correct: 0, category: "bible-translation" },
+                { q: "Who wrote 'Mere Christianity' presenting basic Christian doctrine?", a: ["C.S. Lewis", "G.K. Chesterton", "J.R.R. Tolkien", "Dorothy Sayers"], correct: 0, category: "modern" }
+            ],
+            // ANTIOCH MODE - 70 Questions (Advanced Knowledge)
+            antioch: [
+                // All 50 Jerusalem questions plus 20 more
+                { q: "Who was the Roman emperor who blamed Christians for the fire in Rome in 64 AD?", a: ["Nero", "Constantine", "Diocletian", "Augustus"], correct: 0, category: "early-church" },
+                { q: "In what year did Constantine issue the Edict of Milan, legalizing Christianity?", a: ["313 AD", "325 AD", "405 AD", "476 AD"], correct: 0, category: "early-church" },
+                { q: "Which council in 325 AD affirmed that Jesus was fully divine and equal with the Father?", a: ["Council of Nicaea", "Council of Trent", "Council of Chalcedon", "Council of Constantinople"], correct: 0, category: "councils" },
+                { q: "Who completed the Latin Vulgate Bible in 405 AD?", a: ["Jerome", "Augustine", "Origen", "Athanasius"], correct: 0, category: "bible-translation" },
+                { q: "Which missionary went to Ireland in 432 AD after having been enslaved there?", a: ["St. Patrick", "St. Augustine", "St. Boniface", "St. Columba"], correct: 0, category: "missions" },
+                { q: "In what year did the Great Schism officially split the Eastern Orthodox and Roman Catholic churches?", a: ["1054", "1095", "1517", "1453"], correct: 0, category: "schisms" },
+                { q: "Who wrote 'Summa Theologica' completed in 1273?", a: ["Thomas Aquinas", "Augustine", "Anselm", "Boethius"], correct: 0, category: "theologians" },
+                { q: "In what year did Martin Luther nail his 95 Theses to the church door in Wittenberg?", a: ["1517", "1453", "1520", "1534"], correct: 0, category: "reformation" },
+                { q: "Which English king broke from the Roman Catholic Church to form the Church of England?", a: ["Henry VIII", "Edward VI", "James I", "Charles I"], correct: 0, category: "reformation" },
+                { q: "Who translated the Bible into English in the 1380s, before the Reformation?", a: ["John Wycliffe", "William Tyndale", "John Calvin", "Martin Luther"], correct: 0, category: "bible-translation" },
+                { q: "What was the name of the council that responded to the Protestant Reformation (1545-1563)?", a: ["Council of Trent", "Vatican Council I", "Council of Nicaea", "Council of Chalcedon"], correct: 0, category: "councils" },
+                { q: "Which reformer established a theocracy in Geneva, Switzerland?", a: ["John Calvin", "Ulrich Zwingli", "Martin Luther", "John Knox"], correct: 0, category: "reformation" },
+                { q: "Who is considered the first Christian hermit, retreating to the Egyptian desert around 270 AD?", a: ["Antony of Egypt", "Simeon Stylites", "Benedict of Nursia", "Francis of Assisi"], correct: 0, category: "monasticism" },
+                { q: "Which apostle wrote the Book of Revelation while exiled on the island of Patmos?", a: ["John", "Peter", "Paul", "James"], correct: 0, category: "early-church" },
+                { q: "Who was known as the 'Apostle to the Gentiles'?", a: ["Paul", "Peter", "Barnabas", "Philip"], correct: 0, category: "early-church" },
+                { q: "What event in 1095 was initiated by Pope Urban II to reclaim the Holy Land?", a: ["The First Crusade", "The Inquisition", "The Great Schism", "The Iconoclast Controversy"], correct: 0, category: "medieval" },
+                { q: "Who founded the Jesuit order in 1540?", a: ["Ignatius of Loyola", "Francis Xavier", "Thomas Aquinas", "Dominic de Guzmán"], correct: 0, category: "religious-orders" },
+                { q: "What was the Protestant movement called that emphasized personal conversion and holy living in the 1700s?", a: ["Pietism", "Puritanism", "Methodism", "Anabaptism"], correct: 0, category: "movements" },
+                { q: "Who were the two famous preachers of the Great Awakening in colonial America?", a: ["George Whitefield and Jonathan Edwards", "John Wesley and Charles Wesley", "Martin Luther and John Calvin", "William Tyndale and John Knox"], correct: 0, category: "revival" },
+                { q: "Which Roman emperor made Christianity the official religion of the Roman Empire?", a: ["Theodosius I", "Constantine", "Justinian", "Charlemagne"], correct: 0, category: "early-church" },
+                { q: "Who wrote 'The City of God' in response to the sack of Rome in 410 AD?", a: ["Augustine of Hippo", "Tertullian", "Origen", "Irenaeus"], correct: 0, category: "theologians" },
+                { q: "What heresy denied the full divinity of Christ and was condemned at Nicaea?", a: ["Arianism", "Nestorianism", "Gnosticism", "Pelagianism"], correct: 0, category: "heresies" },
+                { q: "Which medieval movement featured traveling preachers who took vows of poverty?", a: ["Franciscans", "Benedictines", "Cistercians", "Carthusians"], correct: 0, category: "religious-orders" },
+                { q: "Who was burned at the stake in 1415 for his reform ideas before the Protestant Reformation?", a: ["John Hus", "Jan Zizka", "Jerome of Prague", "Peter Waldo"], correct: 0, category: "pre-reformation" },
+                { q: "What major Christian empire fell to the Ottoman Turks in 1453?", a: ["Byzantine Empire", "Holy Roman Empire", "Frankish Kingdom", "Visigothic Kingdom"], correct: 0, category: "medieval" },
+                { q: "Who led the Oxford Movement in the 1800s emphasizing Catholic tradition in Anglicanism?", a: ["John Henry Newman", "Charles Spurgeon", "Dwight L. Moody", "William Booth"], correct: 0, category: "modern" },
+                { q: "Which movement began at Azusa Street in Los Angeles in 1906?", a: ["Pentecostalism", "Fundamentalism", "Neo-orthodoxy", "Social Gospel"], correct: 0, category: "modern" },
+                { q: "What council in 451 AD declared Christ had two distinct natures—divine and human?", a: ["Council of Chalcedon", "Council of Ephesus", "Council of Constantinople", "Council of Nicaea"], correct: 0, category: "councils" },
+                { q: "Who is known as the 'Father of Monasticism in the West'?", a: ["Benedict of Nursia", "Basil the Great", "Antony of Egypt", "Augustine of Hippo"], correct: 0, category: "monasticism" },
+                { q: "Which English preacher founded the Salvation Army in 1865?", a: ["William Booth", "Charles Spurgeon", "George Müller", "Hudson Taylor"], correct: 0, category: "modern" },
+                { q: "Who coined the term 'Trinity' and later joined the Montanist movement?", a: ["Tertullian", "Athanasius", "Origen", "Cyprian"], correct: 0, category: "theologians" },
+                { q: "What was the 'Babylonian Captivity of the Papacy' (1309-1377)?", a: ["When popes resided in Avignon, France", "When Rome was sacked", "When Constantinople fell", "When Protestants separated"], correct: 0, category: "medieval" },
+                { q: "Who led the Methodist movement in 18th century England?", a: ["John Wesley", "George Whitefield", "Jonathan Edwards", "Charles Finney"], correct: 0, category: "revival" },
+                { q: "What document did Luther present at the Diet of Worms in 1521?", a: ["His defense of his teachings", "The 95 Theses", "The Augsburg Confession", "The Heidelberg Catechism"], correct: 0, category: "reformation" },
+                { q: "Which early church father wrote 'Against Heresies' combating Gnosticism?", a: ["Irenaeus", "Justin Martyr", "Clement of Alexandria", "Polycarp"], correct: 0, category: "early-church" },
+                { q: "What was the Peace of Westphalia (1648)?", a: ["Treaty ending religious wars in Europe", "Council defining doctrine", "Agreement on Bible translation", "Concordat with Rome"], correct: 0, category: "reformation" },
+                { q: "Who established the first Protestant missionary society in 1792?", a: ["William Carey", "Hudson Taylor", "David Livingstone", "Adoniram Judson"], correct: 0, category: "missions" },
+                { q: "What theological movement did Karl Barth lead in the 20th century?", a: ["Neo-orthodoxy", "Liberalism", "Fundamentalism", "Liberation Theology"], correct: 0, category: "modern" },
+                { q: "Which pope called the Second Vatican Council (1962-1965)?", a: ["John XXIII", "Paul VI", "Pius XII", "John Paul II"], correct: 0, category: "modern" },
+                { q: "Who wrote 'The Pilgrim's Progress' while imprisoned?", a: ["John Bunyan", "John Milton", "John Donne", "George Herbert"], correct: 0, category: "literature" },
+                { q: "What movement sought to apply Christianity to social problems in the late 1800s?", a: ["Social Gospel", "Liberation Theology", "Fundamentalism", "Dispensationalism"], correct: 0, category: "modern" },
+                { q: "Who translated the New Testament into German before Luther?", a: ["No one—Luther was first", "Erasmus", "John Wycliffe", "William Tyndale"], correct: 0, category: "bible-translation" },
+                { q: "What was the Westminster Assembly (1643-1653)?", a: ["Gathering that produced Reformed confessions", "Trial of Charles I", "Coronation ceremony", "Bible translation committee"], correct: 0, category: "reformation" },
+                { q: "Which missionary was martyred in Ecuador in 1956?", a: ["Jim Elliot", "William Carey", "Hudson Taylor", "C.T. Studd"], correct: 0, category: "missions" },
+                { q: "What doctrine did Pelagius teach that Augustine opposed?", a: ["Humans can achieve salvation without grace", "Christ wasn't fully divine", "The Trinity is false", "Baptism is unnecessary"], correct: 0, category: "heresies" },
+                { q: "Who founded the Moravian Church known for missionary zeal?", a: ["Count Zinzendorf", "John Hus", "Jan Amos Comenius", "Philip Spener"], correct: 0, category: "movements" },
+                { q: "What was the 'Iconoclast Controversy' (726-843)?", a: ["Debate over religious images in worship", "Dispute about Bible translation", "Conflict over papal authority", "Arguments about predestination"], correct: 0, category: "medieval" },
+                { q: "Which theologian wrote 'Institutes of the Christian Religion'?", a: ["John Calvin", "Martin Luther", "Ulrich Zwingli", "Philip Melanchthon"], correct: 0, category: "reformation" },
+                { q: "What biblical discovery was made at Qumran in 1947?", a: ["Dead Sea Scrolls", "Nag Hammadi Library", "Codex Sinaiticus", "Rosetta Stone"], correct: 0, category: "bible-translation" },
+                { q: "Who wrote 'Mere Christianity' presenting basic Christian doctrine?", a: ["C.S. Lewis", "G.K. Chesterton", "J.R.R. Tolkien", "Dorothy Sayers"], correct: 0, category: "modern" },
+                // 20 Additional Antioch questions
+                { q: "What was Montanism, the movement Tertullian joined?", a: ["Charismatic movement emphasizing prophecy", "Denial of Christ's divinity", "Rejection of Old Testament", "Worship of Mary"], correct: 0, category: "heresies" },
+                { q: "Who wrote the 'Confessions,' an autobiographical work about conversion?", a: ["Augustine", "Tertullian", "Jerome", "Origen"], correct: 0, category: "literature" },
+                { q: "What was the Donatist controversy about?", a: ["Validity of sacraments by lapsed clergy", "Nature of Christ", "Canon of Scripture", "Church-state relations"], correct: 0, category: "heresies" },
+                { q: "Which emperor initiated the last great persecution of Christians (303-311)?", a: ["Diocletian", "Nero", "Decius", "Domitian"], correct: 0, category: "early-church" },
+                { q: "What was decided at the Council of Ephesus (431)?", a: ["Mary is Theotokos (God-bearer)", "Christ has two natures", "Canon of Scripture", "Papal supremacy"], correct: 0, category: "councils" },
+                { q: "Who was Nestorius and what did he teach?", a: ["Patriarch who separated Christ's human and divine natures", "Monk who denied original sin", "Bishop who rejected Trinity", "Heretic who worshipped Mary"], correct: 0, category: "heresies" },
+                { q: "What was the Formula of Concord (1577)?", a: ["Lutheran confession resolving disputes", "Peace treaty", "Bible translation guide", "Missionary charter"], correct: 0, category: "reformation" },
+                { q: "Who were the Waldensians?", a: ["Medieval reform movement predating Reformation", "Monastic order", "Gnostic sect", "Crusader group"], correct: 0, category: "pre-reformation" },
+                { q: "What was the 'Filioque' controversy?", a: ["Debate over Holy Spirit's procession", "Dispute about papal authority", "Arguments over icons", "Conflict about Mary's status"], correct: 0, category: "schisms" },
+                { q: "Who was Ulrich Zwingli?", a: ["Swiss reformer in Zurich", "German monk", "French theologian", "English bishop"], correct: 0, category: "reformation" },
+                { q: "What was the Marburg Colloquy (1529)?", a: ["Failed attempt to unify Lutheran and Reformed views", "Peace treaty", "Bible conference", "Missionary convention"], correct: 0, category: "reformation" },
+                { q: "Who founded the Society of Friends (Quakers)?", a: ["George Fox", "William Penn", "John Woolman", "Margaret Fell"], correct: 0, category: "movements" },
+                { q: "What was Jansenism in the Catholic Church?", a: ["Movement emphasizing predestination and grace", "Worship of saints", "Papal supremacy doctrine", "Monastic reform"], correct: 0, category: "movements" },
+                { q: "Who was Menno Simons?", a: ["Anabaptist leader, Mennonites named after him", "Swiss reformer", "English Puritan", "German Lutheran"], correct: 0, category: "reformation" },
+                { q: "What was the Synod of Dort (1618-1619)?", a: ["Reformed assembly that defined Calvinist doctrine", "Catholic council", "Peace conference", "Bible translation committee"], correct: 0, category: "reformation" },
+                { q: "Who was Philipp Melanchthon?", a: ["Luther's colleague who wrote Augsburg Confession", "Swiss reformer", "English translator", "French theologian"], correct: 0, category: "reformation" },
+                { q: "What was Albigensianism?", a: ["Medieval dualistic heresy in southern France", "Monastic order", "Crusader movement", "Scholastic philosophy"], correct: 0, category: "heresies" },
+                { q: "Who was Girolamo Savonarola?", a: ["Florentine reformer burned in 1498", "Pope", "Crusader", "Bible translator"], correct: 0, category: "pre-reformation" },
+                { q: "What was the Elizabethan Settlement (1559)?", a: ["Compromise establishing Church of England", "Peace treaty", "Bible translation", "Monastic charter"], correct: 0, category: "reformation" },
+                { q: "Who convened the Council of Constance (1414-1418)?", a: ["Sigismund, Holy Roman Emperor", "The Pope", "English king", "French king"], correct: 0, category: "councils" }
+            ]
+        };
+
         let currentMode = 'easy';
+        let currentQuizType = 'spiritual'; // 'spiritual' or 'history'
         let currentQuestionIndex = 0;
         let answers = [];
         let currentQuestions = [];
+        let categoryScores = {}; // Track scores by category for history quiz
+
+        // Initialize quiz grid on page load
+        function initQuizGrid() {
+            const quizGrid = document.getElementById('quizGrid');
+            if (!quizGrid) return;
+            
+            quizGrid.innerHTML = upcomingQuizzes.map(quiz => `
+                <div class="quiz-card ${quiz.status === 'available' ? '' : 'disabled'}" 
+                     onclick="${quiz.status === 'available' ? `startQuizSelection('${quiz.quizId}')` : 'return false;'}">
+                    <div class="quiz-card-image">
+                        <img src="${quiz.image}" alt="${quiz.title}">
+                    </div>
+                    <div class="quiz-card-content">
+                        <h3>${quiz.icon} ${quiz.title}</h3>
+                        <p>${quiz.description}</p>
+                        <span class="quiz-status ${quiz.status === 'available' ? 'status-available' : 'status-coming-soon'}">
+                            ${quiz.status === 'available' ? 'Available Now' : 'Coming Soon'}
+                        </span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function startQuizSelection(quizType) {
+            currentQuizType = quizType;
+            
+            if (quizType === 'history') {
+                showHistoryModeSelection();
+            } else {
+                startQuiz('easy'); // Default for other quizzes
+            }
+        }
+
+        function showHistoryModeSelection() {
+            document.querySelector('.welcome-screen').innerHTML = `
+                <div class="container">
+                    <div class="hero">
+                        <div class="hero-image">
+                            <img src="https://images.unsplash.com/photo-1544027993-37dbfe43562a?w=400&h=400&fit=crop" alt="Christian History">
+                        </div>
+                        <h1>⛪ Christian History Trivia</h1>
+                        <p>Journey through 2,000 years of church history. Test your knowledge of councils, reformers, movements, and the events that shaped Christianity. Receive personalized guidance on which biblical and historical texts to study based on your results.</p>
+                        
+                        <div class="mode-selector">
+                            <div class="mode-card easy" onclick="startQuiz('bethlehem')">
+                                <div class="mode-card-image">
+                                    <img src="https://images.unsplash.com/photo-1490730141103-6cac27aaab94?w=600&h=400&fit=crop" alt="Bethlehem Mode">
+                                </div>
+                                <h3>⭐ Bethlehem Mode</h3>
+                                <div class="question-count">30 Questions</div>
+                                <div class="description">Foundational events and figures—perfect for beginners exploring church history</div>
+                            </div>
+                            <div class="mode-card medium" onclick="startQuiz('jerusalem')">
+                                <div class="mode-card-image">
+                                    <img src="https://images.unsplash.com/photo-1499728603263-13726abce5fd?w=600&h=400&fit=crop" alt="Jerusalem Mode">
+                                </div>
+                                <h3>✝️ Jerusalem Mode</h3>
+                                <div class="question-count">50 Questions</div>
+                                <div class="description">Intermediate knowledge of councils, reformers, and historical movements</div>
+                            </div>
+                            <div class="mode-card hard" onclick="startQuiz('antioch')">
+                                <div class="mode-card-image">
+                                    <img src="https://images.unsplash.com/photo-1519834785169-98be25ec3f84?w=600&h=400&fit=crop" alt="Antioch Mode">
+                                </div>
+                                <h3>📜 Antioch Mode</h3>
+                                <div class="question-count">70 Questions</div>
+                                <div class="description">Comprehensive assessment for true church history scholars and enthusiasts</div>
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn-secondary" onclick="backToHome()" style="margin-top: 30px;">← Back to Home</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function backToHome() {
+            location.reload();
+        }
 
         function startQuiz(mode) {
             currentMode = mode;
             currentQuestionIndex = 0;
             answers = [];
-            currentQuestions = questions[mode];
+            categoryScores = {};
+            
+            if (currentQuizType === 'history') {
+                currentQuestions = historyQuestions[mode];
+            } else {
+                currentQuestions = questions[mode];
+            }
             
             document.querySelector('.welcome-screen').classList.remove('active');
             document.querySelector('.quiz-screen').classList.add('active');
@@ -1014,7 +1334,22 @@
             const questionNumber = document.getElementById('questionNumber');
             const progressBar = document.getElementById('progressBar');
             
-            questionText.textContent = currentQuestions[currentQuestionIndex];
+            if (currentQuizType === 'history') {
+                const currentQ = currentQuestions[currentQuestionIndex];
+                questionText.innerHTML = `
+                    <div style="margin-bottom: 20px;">${currentQ.q}</div>
+                    <div class="scale-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        ${currentQ.a.map((answer, idx) => `
+                            <div class="scale-option" onclick="selectHistoryAnswer(${idx})" data-answer="${idx}" style="min-width: 200px; padding: 20px;">
+                                <div class="label" style="font-size: 14px; color: var(--text-primary);">${answer}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } else {
+                questionText.textContent = currentQuestions[currentQuestionIndex];
+            }
+            
             questionNumber.textContent = `Question ${currentQuestionIndex + 1} of ${currentQuestions.length}`;
             
             const progress = ((currentQuestionIndex + 1) / currentQuestions.length) * 100;
@@ -1040,6 +1375,20 @@
             document.getElementById('nextBtn').disabled = false;
         }
 
+        function selectHistoryAnswer(answerIndex) {
+            const currentQ = currentQuestions[currentQuestionIndex];
+            answers[currentQuestionIndex] = {
+                selected: answerIndex,
+                correct: currentQ.correct,
+                category: currentQ.category
+            };
+            
+            document.querySelectorAll('.scale-option').forEach(opt => opt.classList.remove('selected'));
+            event.target.closest('.scale-option').classList.add('selected');
+            
+            document.getElementById('nextBtn').disabled = false;
+        }
+
         function nextQuestion() {
             if (currentQuestionIndex < currentQuestions.length - 1) {
                 currentQuestionIndex++;
@@ -1057,17 +1406,40 @@
         }
 
         function showResults() {
-            const totalScore = answers.reduce((sum, val) => sum + val, 0);
-            const maxScore = currentQuestions.length * 5;
-            const percentage = (totalScore / maxScore) * 100;
-            
             document.querySelector('.quiz-screen').classList.remove('active');
             document.querySelector('.results-screen').classList.add('active');
             
-            document.getElementById('finalScore').textContent = totalScore;
-            document.getElementById('maxScore').textContent = `/ ${maxScore}`;
+            let resultData;
             
-            let resultData = getResultData(percentage);
+            if (currentQuizType === 'history') {
+                // Calculate history quiz results
+                let correctAnswers = 0;
+                answers.forEach(ans => {
+                    if (ans.selected === ans.correct) {
+                        correctAnswers++;
+                        categoryScores[ans.category] = (categoryScores[ans.category] || 0) + 1;
+                    }
+                });
+                
+                const totalScore = correctAnswers;
+                const maxScore = currentQuestions.length;
+                const percentage = (totalScore / maxScore) * 100;
+                
+                document.getElementById('finalScore').textContent = totalScore;
+                document.getElementById('maxScore').textContent = `/ ${maxScore}`;
+                
+                resultData = getHistoryResultData(percentage, categoryScores);
+            } else {
+                // Calculate spiritual quiz results
+                const totalScore = answers.reduce((sum, val) => sum + val, 0);
+                const maxScore = currentQuestions.length * 5;
+                const percentage = (totalScore / maxScore) * 100;
+                
+                document.getElementById('finalScore').textContent = totalScore;
+                document.getElementById('maxScore').textContent = `/ ${maxScore}`;
+                
+                resultData = getResultData(percentage);
+            }
             
             document.getElementById('resultTitle').textContent = resultData.title;
             document.getElementById('resultDescription').textContent = resultData.description;
@@ -1208,12 +1580,185 @@
             }
         }
 
-        function restartQuiz() {
-            document.querySelector('.results-screen').classList.remove('active');
-            document.querySelector('.welcome-screen').classList.add('active');
+        function getHistoryResultData(percentage, categoryScores) {
+            // Determine weak categories
+            const categoryNames = {
+                'early-church': 'Early Church History',
+                'councils': 'Church Councils',
+                'bible-translation': 'Bible Translation History',
+                'missions': 'Missionary Movement',
+                'schisms': 'Church Divisions',
+                'theologians': 'Church Fathers & Theologians',
+                'reformation': 'Protestant Reformation',
+                'medieval': 'Medieval Church',
+                'monasticism': 'Monasticism',
+                'heresies': 'Heresies & Controversies',
+                'revival': 'Revival Movements',
+                'modern': 'Modern Church History',
+                'religious-orders': 'Religious Orders',
+                'pre-reformation': 'Pre-Reformation Reformers',
+                'movements': 'Christian Movements',
+                'literature': 'Christian Literature'
+            };
+            
+            const readingSuggestions = {
+                'early-church': 'Acts 1-12, 1 & 2 Timothy, Romans, Church History texts on apostolic age',
+                'councils': 'Study of Nicene and Apostles\' Creed, historical church documents',
+                'bible-translation': 'History of Bible translation, 2 Timothy 3:16-17, Psalm 119',
+                'missions': 'Acts 13-28, Matthew 28:18-20, Romans 10:13-15, Missionary biographies',
+                'schisms': '1 Corinthians 1:10-13, John 17:20-23, Church history on divisions',
+                'theologians': 'Writings of Augustine, Athanasius, and other church fathers',
+                'reformation': 'Romans, Galatians, Ephesians 2:8-9, Reformation history',
+                'medieval': 'Church history 500-1500 AD, monastic traditions',
+                'monasticism': 'Desert fathers writings, Rule of St. Benedict',
+                'heresies': 'Colossians, 1 John, 2 Peter 2, Jude, study of early controversies',
+                'revival': 'Acts 2, Joel 2:28-32, Habakkuk 3:2, revival history texts',
+                'modern': '20th-21st century church history, contemporary theological works',
+                'religious-orders': 'Monastic rules, biographies of order founders',
+                'pre-reformation': 'Writings of Wycliffe, Hus, Waldensians',
+                'movements': 'Denominational histories, movement-specific texts',
+                'literature': 'Classic Christian literature: Pilgrim\'s Progress, Confessions, etc.'
+            };
+            
+            // Find weakest categories
+            const categoriesArray = Object.entries(categoryScores).sort((a, b) => a[1] - b[1]);
+            const weakestCategories = categoriesArray.slice(0, 3);
+            
+            if (percentage >= 85) {
+                return {
+                    title: "📚 Church History Scholar",
+                    description: "Exceptional! You have comprehensive knowledge of Christian history spanning from the early church to modern times. Your understanding of pivotal events, key figures, and theological developments demonstrates deep study.",
+                    insights: [
+                        {
+                            title: "Historical Mastery",
+                            text: "You've demonstrated excellent knowledge across most periods of church history. Continue deepening your understanding of how God has worked through His church across the centuries."
+                        },
+                        {
+                            title: "Growth Opportunities",
+                            text: weakestCategories.length > 0 ? 
+                                `Consider studying more about: ${weakestCategories.map(c => categoryNames[c[0]]).join(', ')}` :
+                                "Explore primary sources and original writings from historical figures to gain even deeper insights."
+                        },
+                        {
+                            title: "Next Steps",
+                            text: "Study church history in its biblical context. Consider reading comprehensive works like 'Church History in Plain Language' or biographies of key reformers and church fathers."
+                        }
+                    ],
+                    quote: {
+                        text: "One generation shall commend your works to another, and shall declare your mighty acts.",
+                        reference: "Psalm 145:4"
+                    },
+                    readingSuggestions: weakestCategories.length > 0 ? 
+                        weakestCategories.map(c => `${categoryNames[c[0]]}: ${readingSuggestions[c[0]]}`).join('\n\n') :
+                        "Continue reading comprehensive church history texts and primary sources from various periods."
+                };
+            } else if (percentage >= 70) {
+                return {
+                    title: "📖 Growing Historian",
+                    description: "Well done! You have solid foundational knowledge of church history. You understand major events and key figures, though some areas could use deeper exploration.",
+                    insights: [
+                        {
+                            title: "Strong Foundation",
+                            text: "You grasp the major movements and turning points in Christian history. This knowledge helps you understand how doctrine and practice developed over time."
+                        },
+                        {
+                            title: "Areas to Strengthen",
+                            text: weakestCategories.length > 0 ?
+                                `Focus your study on: ${weakestCategories.map(c => categoryNames[c[0]]).join(', ')}` :
+                                "Explore lesser-known periods and figures in church history."
+                        },
+                        {
+                            title: "Next Steps",
+                            text: "Read books on specific periods or movements where you scored lower. Connect historical events to their biblical foundations."
+                        }
+                    ],
+                    quote: {
+                        text: "Remember the days of old; consider the years of many generations; ask your father, and he will show you, your elders, and they will tell you.",
+                        reference: "Deuteronomy 32:7"
+                    },
+                    readingSuggestions: weakestCategories.length > 0 ?
+                        `Focus on these areas:\n\n${weakestCategories.map(c => `${categoryNames[c[0]]}: ${readingSuggestions[c[0]]}`).join('\n\n')}` :
+                        "Study comprehensive church history resources focusing on periods you're less familiar with."
+                };
+            } else if (percentage >= 50) {
+                return {
+                    title: "🕊️ History Learner",
+                    description: "You have basic knowledge of church history with room for significant growth. Understanding how God has worked throughout history will enrich your faith and provide valuable context for Scripture.",
+                    insights: [
+                        {
+                            title: "Basic Understanding",
+                            text: "You recognize some key events and figures in Christian history. This is a great starting point for deeper exploration."
+                        },
+                        {
+                            title: "Priority Study Areas",
+                            text: weakestCategories.length > 0 ?
+                                `Begin by studying: ${weakestCategories.map(c => categoryNames[c[0]]).join(', ')}` :
+                                "Focus on major periods: Early Church, Medieval period, Reformation, and Modern era."
+                        },
+                        {
+                            title: "Getting Started",
+                            text: "Start with accessible church history overviews. Watch documentaries or video series on church history. Connect historical events to the books of the Bible being written or used during those periods."
+                        }
+                    ],
+                    quote: {
+                        text: "The fear of the Lord is the beginning of knowledge; fools despise wisdom and instruction.",
+                        reference: "Proverbs 1:7"
+                    },
+                    readingSuggestions: weakestCategories.length > 0 ?
+                        `Start with these essential areas:\n\n${weakestCategories.map(c => `${categoryNames[c[0]]}: ${readingSuggestions[c[0]]}`).join('\n\n')}\n\nAlso read: Acts (for early church), and 'Christianity Through the Centuries' by Earle Cairns for comprehensive overview.` :
+                        "Begin with: Acts 1-15 (Early Church), Church history survey books, and biographies of key figures like Augustine, Luther, and Wesley."
+                };
+            } else {
+                return {
+                    title: "📜 Beginning Your Historical Journey",
+                    description: "Church history is new territory for you, and that's okay! Learning how God has preserved and grown His church through the centuries will strengthen your faith and biblical understanding.",
+                    insights: [
+                        {
+                            title: "Starting Point",
+                            text: "Everyone begins somewhere. Church history connects you to the great cloud of witnesses who have followed Christ throughout the ages."
+                        },
+                        {
+                            title: "Where to Focus",
+                            text: "Start with the Early Church period in Acts. Learn about the Reformation and how we received the Bible in our language. These foundational topics will build your historical framework."
+                        },
+                        {
+                            title: "First Steps",
+                            text: "Read the book of Acts to see the church begin. Watch introductory church history videos. Find an accessible church history book for beginners. Connect with others who can share this journey."
+                        }
+                    ],
+                    quote: {
+                        text: "Your word is a lamp to my feet and a light to my path.",
+                        reference: "Psalm 119:105"
+                    },
+                    readingSuggestions: `Essential Starting Points:
+
+1. Biblical Foundation: Read the entire book of Acts to understand the early church
+2. Early Church: Acts 1-12, study the apostolic fathers
+3. Bible History: Learn how we got the Bible - 2 Timothy 3:16-17, history of translation
+4. The Reformation: Read about Martin Luther and the Five Solas - Romans 3:21-28, Ephesians 2:8-9
+
+Recommended Books:
+- 'Church History in Plain Language' by Bruce Shelley
+- 'The Story of Christianity' by Justo González
+- '2000 Years of Christ's Power' by Nick Needham (5 volume series, start with Vol. 1)
+
+Online Resources:
+- Christian History Magazine articles
+- Church history documentary series
+- Biographies of key figures: Augustine, Martin Luther, John Wesley`
+                };
+            }
         }
 
-        document.querySelector('.welcome-screen').classList.add('active');
+        function restartQuiz() {
+            location.reload();
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            initQuizGrid();
+            document.querySelector('.welcome-screen').classList.add('active');
+        });
     </script>
 </body>
 </html>
